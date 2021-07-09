@@ -15,10 +15,10 @@ public class MemberRepository {
 
 
     //회원 등록
-    public Long save(Member member)
+    public void save(Member member)
     {
         em.persist(member);
-        return member.getId();
+
     }
 
     //단건 조회
