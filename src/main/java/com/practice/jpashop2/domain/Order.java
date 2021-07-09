@@ -1,9 +1,9 @@
 package com.practice.jpashop2.domain;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.Cascade;
-import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "orders")
 public class Order {
 
@@ -35,7 +36,7 @@ public class Order {
     private LocalDateTime orderDate; //주문 시간
 
     @Enumerated(EnumType.STRING) //주문 상태 [ORDER,CANCEL]
-    private OderStatus status;
+    private OrderStatus status;
 
     /**
      * 연관관계 편의 메서드 (양방향)
@@ -67,7 +68,7 @@ public class Order {
         for (OrderItem item : orderItems) {
             order.addOrderItem(item);
         }
-        order.setStatus(OderStatus.ORDER);
+        order.setStatus(OrderStatus.ORDER);
         order.setOrderDate(LocalDateTime.now());
         return order;
     }
@@ -76,12 +77,12 @@ public class Order {
      * 비즈니스 로직
      * todo : 주문 취소 -> 재고 수량 증가
      */
-    public void cancel(Order order) {
+    public void cancel() {
         //이미 배송완료
         if (delivery.getStatus() == DeliveryStatus.COMP) {
             throw new IllegalStateException("이미 배송완료된 상품은 취소할 수 없습니다.");
         }
-        this.setStatus(OderStatus.CANCEL);
+        this.setStatus(OrderStatus.CANCEL);
 
         for (OrderItem orderItem : orderItems) {
             orderItem.cancel();
